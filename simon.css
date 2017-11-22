@@ -1,0 +1,383 @@
+body {
+  height: 95vh;
+  margin: 0;
+  overflow: hidden;
+  font-family: 'Open Sans', Roboto, sans-serif;
+  /*display: flex;*/
+  /*display: -webkit-flex;*/
+  /*flex-direction: column;*/
+  /*-webkit-flex-direction: column;*/
+  /*align-items: center;*/
+  /*-webkit-align-items: center;*/
+  /*justify-content: center;*/
+  background-color: #3a4061; /*#363636;*/
+  /*animation-name: body;*/
+  /*animation-duration: 20ms;*/
+  background-image: url("https://www.transparenttextures.com/patterns/az-subtle.png");
+/* This is mostly intended for prototyping; please download the pattern and re-host for production environments. Thank you! */
+}
+
+h1 {
+  font-size: 2.5em;
+  letter-spacing: 2px;
+  text-align: center;
+  margin-bottom: 5px;
+  padding-bottom: 5px;
+}
+
+.visible {
+  visibility: hidden;
+}
+
+#main-board {
+  display: inline-flex;
+  /*-webkit-display: inline-flex;*/
+  /*border: 1px solid white;*/
+  margin: 0;
+  /*padding: 0;*/
+  /*margin-top: 5%;*/
+  /*margin-bottom: 0;*/
+  /*height: 600px;*/
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
+  max-width: 85%;
+  max-height: 80%;
+  /*box-shadow: 4px 4px 8px 3px rgba(0, 0, 0, 0.40);*/
+}
+
+.board-intro {
+  animation-name: intro;
+  animation-delay: 5ms;
+  animation-duration: 3s;
+  animation-direction: normal;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease-in-out;
+
+  -webkit-animation-name: intro;
+  -webkit-animation-delay: 5ms;
+  -webkit-animation-duration: 3s;
+  -webkit-animation-direction: normal;
+  -webkit-animation-iteration-count: 1;
+  -webkit-animation-fill-mode: forwards;
+  -webkit-animation-timing-function: ease-in-out;
+  /*animation-timing-function: cubic-bezier(0.3, 0.1, 0.5, 0.3);*/
+}
+
+.board-spin {
+  animation-name: spin;
+  animation-delay: 0ms;
+  animation-duration: 14s;
+  animation-direction: normal;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+  animation-timing-function: cubic-bezier(1.4, 0.7, 0.7, 0.1);
+  -webkit-animation-name: spin;
+  -webkit-animation-delay: 0ms;
+  -webkit-animation-duration: 4s;
+  -webkit-animation-direction: normal;
+  -webkit-animation-iteration-count: 1;
+  -webkit-animation-fill-mode: forwards;
+  /*animation-timing-function: ease-in-out;*/
+  -webkit-animation-timing-function: cubic-bezier(1.4, 0.7, 0.7, 0.1);
+}
+
+#inner-circle:hover {
+  cursor: pointer;
+}
+
+.quads-hover-on-off:hover {
+  cursor: pointer;
+}
+
+/*#upper-left-green {*/
+  /*position: absolute;*/
+  /*left: 30px;*/
+  /*top: 30px;*/
+/*}*/
+
+@keyframes intro {
+  from {
+    /*top: 80%;*/
+    transform: translate(-50%, -50%) rotate(0deg) scale(0.02);
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  to {
+    /*top: 50%;*/
+    transform: translate(-50%, -50%) rotate(360deg) scale(1);
+    transform-origin: centre;
+    opacity: 1;
+  }
+}
+
+-webkit-@keyframes intro {
+  0% {
+    /*top: 80%;*/
+    -webkit-transform: translate(-50%, -50%) rotate(0deg) scale(0.02);
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    /*top: 50%;*/
+    -webkit-transform: translate(-50%, -50%) rotate(360deg) scale(1);
+    -webkit-transform-origin: centre;
+    opacity: 1;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+    transform-origin: centre;
+  }
+}
+
+-webkit-@keyframes spin {
+  0% {
+    -webkit-transform: translate(-50%, -50%) rotate(0deg);
+  }
+
+  100% {
+    -webkit-transform: translate(-50%, -50%) rotate(360deg);
+    -webkit-transform-origin: centre;
+  }
+}
+
+#start {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
+  /*opacity: 0;*/
+  visibility: hidden;
+  z-index: 10;
+  width: 60px;
+  height: 60px;
+  padding: 0;
+  border: 2px solid black; /* 1px */
+  border-radius: 50%;
+  background-color: #ccc; /* #000 */
+  color: #000;  /* #ccc */
+  font-weight: bold;
+}
+
+.start-hover-on-off:hover {
+  cursor: pointer;
+  letter-spacing: 1px;
+  /*color: #eee;*/
+}
+
+/* not sure what this is doing...*/
+button:focus {
+  outline: 0;
+}
+
+#colorSequence {
+  text-align: left;
+  /*text-align-last: left;*/
+  position: absolute;
+  margin-bottom: 0;
+  visibility: hidden;
+  line-height: 0.8em;
+  /*top: 80%;*/
+  /*left: 50%;*/
+  bottom: 20px;
+  left: 20px;
+  /*transform: translate(-50%, 0);*/
+  /*-webkit-transform: translate(-50%, 0);*/
+  /*width: 500px;*/
+  max-width: 60%;
+  font-size: 2em; /*0.8em;*/
+  color: #ccc;
+}
+
+#colorSequence::first-line {
+  /*text-align: center;*/
+  font-size: 1rem;
+}
+
+#controls1 {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  /*top: 100px;*/
+  /*left: 10px;*/
+  bottom: 20px; /* 90px */
+  right: 20px;
+  /*right: 10%;*/
+  color: #ccc;
+  font-size: 0.8em;
+  line-height: 0.8em;
+}
+
+#controls2 {
+  position: absolute;
+  display: none;
+  width: 100px;
+  padding-left: 5px;
+  /*top: 200px;*/
+  /*left: 18px;*/
+  bottom: 20px;
+  right: 15px;
+  color: #ccc;
+  font-size: 0.8em;
+}
+
+input {
+  width: 54px;
+}
+
+.radio {
+  /*border: 0;*/
+  height: 1.6em;
+  width: 1.6em;
+  /*margin-bottom: 0;*/
+}
+
+.radio-text {
+  margin-left: 4px;
+  position: relative;
+  bottom: 6px;
+}
+
+#wrong {
+  position: absolute;
+  width: 70px;
+  top: 300px;
+  left: 18px;
+  color: #ccc;
+  background-color: red;
+  font-size: 0.8em;
+  border: 1px solid black;
+}
+
+#wrong:hover {
+  cursor: pointer;
+  letter-spacing: 1.2px;
+  color: #eee;
+}
+
+
+/**********************************************
+ MEDIA QUERIES:
+**********************************************/
+
+@media (orientation: landscape) {
+  #controls1 {
+    display: flex;
+    flex-direction: row;
+    width: 200px;
+    height: 20px;
+  }
+
+  .radio-text {
+    margin: 0 4px 0 4px;
+    position: relative;
+    top: 7px;
+  }
+}
+
+@media (max-height: 770px) {
+  h1 {
+    font-size: 1.8em;
+    letter-spacing: 2px;
+  }
+
+  #start {
+    background-color: #ccc;
+    color: #000;
+    border-width: 2px;
+  }
+  .start-hover-on-off:hover {
+    cursor: pointer;
+    letter-spacing: 0;
+    color: #000;
+  }
+}
+
+@media (max-height: 600px) {
+  #main-board {
+    top: 45%;
+    max-width: 90%;
+  }
+
+  #start {
+    top: 45%;
+  }
+
+  /*#colorSequence {
+    text-align: left;
+    margin: 0;
+    left: 20px;
+    bottom: 20px;
+    width: 300px;
+    font-size: 2em; /*0.8em;*/
+    color: #ccc;
+  }*/
+}
+
+@media (max-width: 770px) {
+  h1 {
+    font-size: 1.8em;
+    letter-spacing: 2px;
+  }
+
+  #start {
+    background-color: #ccc;
+    color: #000;
+    border-width: 2px;
+  }
+  .start-hover-on-off:hover {
+    cursor: pointer;
+    letter-spacing: 0;
+    color: #000;
+  }
+}
+
+@media (max-width: 600px) {
+  h1 {
+    font-size: 1.5em;
+    letter-spacing: 2px;
+  }
+
+  #controls1 {
+    display: flex;
+    flex-direction: row;
+    width: 200px;
+    height: 20px;
+  }
+
+  .radio-text {
+    margin: 0 4px 0 4px;
+    position: relative;
+    top: 7px;
+  }
+
+@media (orientation: landscape) and (max-width: 770px) {
+
+}
+
+@media (orientation: landscape) and (max-height: 770px) {
+
+  h1 {
+    display: none;
+  }
+
+}
