@@ -281,7 +281,7 @@ var simonModule = function () {
    Game functions:
   ********************************************/
 
-  var randomQuads = [1,1,2,2,3,3,4,4,1,1,2,2,3,3,4,4];
+  var randomQuads = [];
 
   var randomizer = function randomizer() {
     var nextQuad = Math.floor(Math.random() * 4 + 1);
