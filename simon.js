@@ -281,7 +281,7 @@ var simonModule = function () {
    Game functions:
   ********************************************/
 
-  var randomQuads = [];
+  var randomQuads = [1,1,2,2,3,3,4,4,1,1,2,2,3,3,4,4];
 
   var randomizer = function randomizer() {
     var nextQuad = Math.floor(Math.random() * 4 + 1);
@@ -311,12 +311,13 @@ var simonModule = function () {
   };
 
   // main game controls outside of user actions:
-  var quadClickerEventType = 'click'; //default
+  // var quadClickerEventType = 'click'; //default
   var startGame = function startGame() {
     randomizer();
     var startButton = document.getElementById('start');
     document.getElementById('colorSequence').style.visibility = 'hidden';
     startButton.setAttribute('disabled', true);
+    disableStartButton();
     startButton.classList.remove('start-hover-on-off');
     var color = ['green', 'red', 'yellow', 'blue'];
     var colorSequence = [];
@@ -354,11 +355,9 @@ var simonModule = function () {
     }, intermittent + cycleStart * (lgt - 1)); //200 + 1000
     document.getElementById('start').innerHTML = 'round<br />' + randomQuads.length;
     setTimeout(function (lgt) {
-      addQuadClickerEvent(quadClickerEventType);
+      addQuadClickerEvent();
       hoverQuadsOnOff('on');
     }, cycleStart * lgt);
-    // addQuadClickerEvent();
-    // hoverQuadsOnOff('on');
   }; // end of startGame function
 
 
@@ -382,7 +381,7 @@ var simonModule = function () {
       } else {
         wrongAnswerLights();
         hoverQuadsOnOff('off');
-        removeQuadClickerEvent(quadClickerEventType);
+        removeQuadClickerEvent();
         let score = randomQuads.length - 1;
         startButton.innerHTML = 'wrong!';
         setTimeout(function () {
@@ -392,6 +391,7 @@ var simonModule = function () {
         setTimeout(function () {
           startButton.innerHTML = 'try<br />again';
           startButton.removeAttribute('disabled');
+          enableStartButton();
           startButton.classList.add('start-hover-on-off');
         }, 5000);
         setTimeout(function () {
@@ -472,23 +472,36 @@ var simonModule = function () {
     moveQuad();
     */
 
+
   /********************************************
    Event Listeners:
   ********************************************/
 
   function innerCircleLightShowStart(event) {
     lightShowStart(400);
-    if ( event === 'touchstart' ) {
+    if ( event.type === 'touchstart' ) {
       event.preventDefault();
-      event.stopPropagation();
+      console.log(event.type);
+      // event.stopPropagation();
     }
   }
 
-  // Click inner circle to turn light show on/off:
+  // Click or touch inner circle to turn light show on/off:
   cacheDom.innerCircle.addEventListener('click', innerCircleLightShowStart, false);
+  cacheDom.innerCircle.addEventListener('touchstart', innerCircleLightShowStart, false);
 
-  // Click start button to start game:
-  document.getElementById('start').addEventListener('click', startGame, false);
+  // Enables start button:
+  function enableStartButton() {
+    document.getElementById('start').addEventListener('click', startGame, false);
+    document.getElementById('start').addEventListener('touchstart', startGame, false);
+  }
+  window.addEventListener('load', enableStartButton,false);
+
+  // Disables start button:
+  function disableStartButton() {
+    document.getElementById('start').removeEventListener('click', startGame, false);
+    document.getElementById('start').removeEventListener('touchstart', startGame, false);
+  }
 
   // Click or touch quads to turn lights on. Allows to play the game:
   function quadClicker(event) {
@@ -497,9 +510,10 @@ var simonModule = function () {
       lightBeep(event.target.id, 300);
       setTimeout(lightOff.bind(null, event.target), 300);
       gameClicker(event.target);
-      if ( event === 'touchstart' ) {
+      if ( event.type === 'touchstart' ) {
         event.preventDefault();
-        event.stopPropagation();
+        console.log(event.type);
+        // event.stopPropagation();
       }
       // console.log('eventListener (target): ' + event.target);
       // console.log('eventListener (target.id): ' + event.target.id);
@@ -508,21 +522,15 @@ var simonModule = function () {
   }
 
   // Enables quads:
-  function addQuadClickerEvent(event) {
-    if ( event === 'click' ) { cacheDom.allColorButtons.addEventListener('click', quadClicker, false);
-    }
-    else if ( event === 'touchstart' ) {
+  function addQuadClickerEvent() {
     cacheDom.allColorButtons.addEventListener('touchstart', quadClicker, false);
-    }
+    cacheDom.allColorButtons.addEventListener('click', quadClicker, false);
   }
 
   // Disable quads (click):
-  function removeQuadClickerEvent(event) {
-    if ( event === 'click' ) { cacheDom.allColorButtons.removeEventListener('click', quadClicker, false);
-    }
-    else if ( event === 'touchstart' ) {
+  function removeQuadClickerEvent() {
     cacheDom.allColorButtons.removeEventListener('touchstart', quadClicker, false);
-    }
+    cacheDom.allColorButtons.removeEventListener('click', quadClicker, false);
   }
 
   // Resets custom speed value when radio button clicked:
@@ -559,8 +567,8 @@ var simonModule = function () {
     let board = document.getElementById('main-board');
     let x = h1.getBoundingClientRect().bottom;
     let y = board.getBoundingClientRect().top;
-    console.log(y - x);
-    console.log('window resized');
+    // console.log(y - x);
+    // console.log('window resized');
     if ( x > ( y + 10 ) ) {
       h1.classList.add('visible');
     }
@@ -570,64 +578,6 @@ var simonModule = function () {
   }
   window.addEventListener('load', h1Remover,false);
   window.addEventListener('resize', h1Remover,false);
-
-
-  // Determines if user is using touch or mouse.
-  // Determines pointer type (touch or mouse).
-  // Default is assumed to be a mouse click:
-  var touchInterface = false;
-  var clickInterface = true;
-  var onFirstClickSwitch = false;
-  var onFirstTouchSwitch = false;
-
-  // Checks if user has touched the screen:
-  function onFirstTouch() {
-    touchInterface = true;
-    clickInterface = false;
-    onFirstTouchSwitch = true;
-    quadClickerEventType = 'touch';
-    switchToTouch();
-    // turnOffClickMode();
-    console.log('screen touched, click events removed');
-    // we only need to know once that a human touched the screen, so we can stop listening now
-    window.removeEventListener('touchstart', onFirstTouch, false);
-    // if ( onFirstClickSwitch ) { window.addEventListener('click', onFirstClick, false);
-    // }
-  }
-  window.addEventListener('touchstart', onFirstTouch, false);
-
-  // Checks if user has clicked the screen:
-  function onFirstClick() {
-    touchInterface = false;
-    clickInterface = true;
-    onFirstClickSwitch = true;
-    // switchToClick();
-    // turnOffTouchMode();
-    console.log('screen clicked, touch events removed');
-    // we only need to know once that a human clicked the screen, so we can stop listening now
-    window.removeEventListener('click', onFirstClick, false);
-    // if ( onFirstTouchSwitch ) { window.addEventListener('touchstart', onFirstTouch, false);
-    }
-
-  window.addEventListener('click', onFirstClick, false);
-
-  function switchToTouch() {
-    // Touch inner circle to turn light show on/off:
-    cacheDom.innerCircle.addEventListener('touchstart', innerCircleLightShowStart, false);
-    cacheDom.innerCircle.removeEventListener('click', innerCircleLightShowStart, false);
-    // Touch start button to start game:
-    document.getElementById('start').addEventListener('touchstart', startGame, false);
-    document.getElementById('start').removeEventListener('click', startGame, false);
-  }
-
-  // function turnOffClickMode() {
-  // }
-
-  // function switchToClick() {
-  // }
-
-  // function turnOffTouchMode() {
-  // }
 
 
   /********************************************
