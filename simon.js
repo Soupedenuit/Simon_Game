@@ -281,7 +281,7 @@ var simonModule = function () {
    Game functions:
   ********************************************/
 
-  var randomQuads = [];
+  var randomQuads = []; /*[1,1,2,2,3,3,4,4,1,1,2,2,3,3,4,4,1,1,2,3,4,1,2,3]; */
 
   var randomizer = function randomizer() {
     var nextQuad = Math.floor(Math.random() * 4 + 1);
@@ -314,6 +314,7 @@ var simonModule = function () {
   // var quadClickerEventType = 'click'; //default
   var startGame = function startGame() {
     randomizer();
+    volume();
     var startButton = document.getElementById('start');
     document.getElementById('colorSequence').style.visibility = 'hidden';
     startButton.setAttribute('disabled', true);
@@ -323,13 +324,12 @@ var simonModule = function () {
     var colorSequence = [];
     // let colorCodes = ['rgb(68,144,86)', 'rgb(194,0,0)', 'rgb(245,184,22)', 'rgb(42,91,154)'];
     var colorCodes = [colors.defaultGreen, colors.defaultRed, colors.defaultYellow, colors.defaultBlue];
-    var text = '<ins>Color sequence was</ins><br/>';
     var el = document.querySelector('#colorSequence');
     var lightOnLength = document.getElementById('lightOnLength').value;
     console.log('lightOnLength (before):  ' + lightOnLength);
     // Radio buttons control speed (length of lightOn) & intermittent (time between lights on):
-    var radioSetting = document.querySelectorAll('.radio');
-    lightOnLength > 0 ? lightOnLength = lightOnLength : radioSetting[0].checked ? lightOnLength = 800 : radioSetting[1].checked ? lightOnLength = 550 : radioSetting[2].checked ? lightOnLength = 300 : null;
+    var radio1Setting = document.querySelectorAll('.radio1');
+    lightOnLength > 0 ? lightOnLength = lightOnLength : radio1Setting[0].checked ? lightOnLength = 800 : radio1Setting[1].checked ? lightOnLength = 550 : radio1Setting[2].checked ? lightOnLength = 300 : null;
     console.log('lightOnLength (after):  ' + lightOnLength);
     var intermittent = Math.round(lightOnLength / 3);
     console.log('intermittent: ' + intermittent);
@@ -345,13 +345,15 @@ var simonModule = function () {
       }, lightOffStart + cycleStart * index); //600 + 1000
       colorSequence.push(color[x - 1]);
     });
+    var text = 'last sequence was:<br/><span style="font-size: 2em;height:12px;line-height: 0.5em">';
     colorSequence.forEach(function (x) {
       var y = color.indexOf(x);
-      text += '<span style="color: ' + colorCodes[y] + ';">\u25CF </span>';
+      text += '<span style="color: ' + colorCodes[y] + '">\u25CF</span>';
     });
     var lgt = colorSequence.length;
+    console.log(randomQuads);
     setTimeout(function (lgt) {
-      el.innerHTML = text;
+      el.innerHTML = 'you got ' + (randomQuads.length - 1) + ' correct!<br />' + text + '</span>';
     }, intermittent + cycleStart * (lgt - 1)); //200 + 1000
     document.getElementById('start').innerHTML = 'round<br />' + randomQuads.length;
     setTimeout(function (lgt) {
@@ -364,6 +366,7 @@ var simonModule = function () {
   // game controls based on user actions:
   var gameClickerPosition = 0;
   var gameClicker = function gameClicker(el) {
+    volume();
     var startButton = document.getElementById('start');
     var lgt = randomQuads.length;
     if (lgt === 0) {
@@ -420,7 +423,12 @@ var simonModule = function () {
   var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   var gainNode = audioCtx.createGain();
   gainNode.connect(audioCtx.destination);
-  gainNode.gain.value = 0.3;
+  gainNode.gain.value = 0; //default
+  function volume() {
+    var radio3Setting = document.querySelectorAll('.radio3');
+    radio3Setting[0].checked ? gainNode.gain.value = 0.3 : radio3Setting[1].checked ? gainNode.gain.value = 0 :
+    null;
+  }
 
   var notes = {
     C: 261.63,

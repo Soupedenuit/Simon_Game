@@ -195,33 +195,24 @@ button:focus {
   position: absolute;
   margin-bottom: 0;
   visibility: hidden;
-  line-height: 0.8em;
-  /*top: 80%;*/
-  /*left: 50%;*/
-  bottom: 20px;
-  left: 20px;
+  bottom: 15px;
+  left: 10px;
   /*transform: translate(-50%, 0);*/
   /*-webkit-transform: translate(-50%, 0);*/
-  /*width: 500px;*/
-  max-width: 60%;
-  font-size: 2em; /*0.8em;*/
+  max-width: 65%;
+  word-wrap: break-word;
+  /*font-size: 2em; */
   color: #ccc;
-}
-
-#colorSequence::first-line {
-  /*text-align: center;*/
-  font-size: 1rem;
 }
 
 #controls1 {
   position: absolute;
-  width: 100px;
-  height: 100px;
-  /*top: 100px;*/
-  /*left: 10px;*/
-  bottom: 20px; /* 90px */
-  right: 20px;
-  /*right: 10%;*/
+  display: flex;
+  flex-direction: row;
+  width: 200px;
+  height: 20px;
+  bottom: 10px;
+  right: 10px;
   color: #ccc;
   font-size: 0.8em;
   line-height: 0.8em;
@@ -232,29 +223,44 @@ button:focus {
   display: none;
   width: 100px;
   padding-left: 5px;
-  /*top: 200px;*/
-  /*left: 18px;*/
   bottom: 20px;
   right: 15px;
   color: #ccc;
   font-size: 0.8em;
 }
 
+#controls3 {
+  position: absolute;
+  bottom: 15%;
+  right: 10px;
+  /*transform: translate(0, -50%);*/
+  /*-webkit-transform: translate(0, -50%);*/
+  width: 85px;
+  height: 50px;
+  color: #ccc;
+  font-size: 0.8em;
+  line-height: 0.8em;
+}
+
 input {
   width: 54px;
 }
 
-.radio {
-  /*border: 0;*/
+.radio1, .radio3 {
   height: 1.6em;
   width: 1.6em;
-  /*margin-bottom: 0;*/
 }
 
-.radio-text {
+.radio1-text {
+  margin: 0 4px 0 4px;
+  position: relative;
+  top: 7px;
+}
+
+.radio3-text {
   margin-left: 4px;
   position: relative;
-  bottom: 6px;
+  top: -6px;
 }
 
 #wrong {
@@ -279,18 +285,17 @@ input {
  MEDIA QUERIES:
 **********************************************/
 
-@media (orientation: landscape) {
+@media (orientation: portrait) {
   #controls1 {
-    display: flex;
-    flex-direction: row;
-    width: 200px;
-    height: 20px;
+    display: block;
+    width: 85px;
+    height: 80px;
   }
 
-  .radio-text {
-    margin: 0 4px 0 4px;
+  .radio1-text {
+    margin-left: 4px;
     position: relative;
-    top: 7px;
+    top: -6px;
   }
 }
 
@@ -305,6 +310,7 @@ input {
     color: #000;
     border-width: 2px;
   }
+
   .start-hover-on-off:hover {
     cursor: pointer;
     letter-spacing: 0;
@@ -321,16 +327,6 @@ input {
   #start {
     top: 45%;
   }
-
-  /*#colorSequence {
-    text-align: left;
-    margin: 0;
-    left: 20px;
-    bottom: 20px;
-    width: 300px;
-    font-size: 2em; /*0.8em;*/
-    color: #ccc;
-  }*/
 }
 
 @media (max-width: 770px) {
@@ -344,6 +340,7 @@ input {
     color: #000;
     border-width: 2px;
   }
+
   .start-hover-on-off:hover {
     cursor: pointer;
     letter-spacing: 0;
@@ -356,28 +353,12 @@ input {
     font-size: 1.5em;
     letter-spacing: 2px;
   }
-
-  #controls1 {
-    display: flex;
-    flex-direction: row;
-    width: 200px;
-    height: 20px;
-  }
-
-  .radio-text {
-    margin: 0 4px 0 4px;
-    position: relative;
-    top: 7px;
-  }
+}
 
 @media (orientation: landscape) and (max-width: 770px) {
 
 }
 
 @media (orientation: landscape) and (max-height: 770px) {
-
-  h1 {
-    display: none;
-  }
 
 }

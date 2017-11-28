@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+  <title>Simon game project</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no" />
+  <meta name="author" content="Tony Whomever" />
+  <meta name="description" content="A Free Code Camp project">
+  <meta name="keywords" content="Free Code Camp, Simon game, project">
+  <link rel="stylesheet" type="text/css" href="simon.css" />
+  <link href="https://fonts.googleapis.com/css?family=Poiret+One|Open+Sans|Roboto" rel="stylesheet" />
+  <link rel="icon" type="image/png" href="assets/Simon_prototype2.png" />
+
+</head>
+
+
+<body>
+
+  <h1 id="h1">Simon game project !</h1>
+
+  <!-- <img id="main-board" src="Simon_prototype2.svg" alt="Simon app here"> -->
+
+  <svg id="main-board" class="board-intro" width="600" height="550" viewbox="0 0 300 300">
+   <metadata id="metadata5">image/svg+xml</metadata>
+   <g>
+    <title>main-board</title>
+    <g display="inline" id="layer1">
+     <circle id="outer-rim" fill="#000000" fill-rule="evenodd" stroke="#2573d5" stroke-width="0" stroke-linejoin="round" stroke-miterlimit="4" r="138" cx="150" cy="150">
+     </circle>
+    </g>
+    <g id="layer2">
+     <path id="upper-left-green" class="quad" fill="rgb(68,144,86)" fill-rule="evenodd" stroke="#000000" stroke-width="5" stroke-linejoin="round" stroke-miterlimit="4" transform="translate(0,3) scale(-1) " d="m-20.00002,-147.000031a130,130 0 0 1 -129.70202,129.99966l-0.29798,-129.99966l130,0z">
+     </path>
+     <path id="lower-right-blue" class="quad" fill="rgb(42,91,154)" fill-rule="evenodd" stroke="#000000" stroke-width="5" stroke-linejoin="round" stroke-miterlimit="4" d="m280.00002,150.000031a130,130 0 0 1 -129.70202,129.99966l-0.29798,-129.99966l130,0z">
+     </path>
+     <path id="lower-left-yellow" class="quad" fill="rgb(245,184,22)" fill-rule="evenodd" stroke="#000000" stroke-width="5" stroke-linejoin="round" stroke-miterlimit="4" d="m-20.00002,147.000031a130,130 0 0 1 -129.70202,129.99966l-0.29798,-129.99966l130,0z"  transform="translate(0,3) scale(-1,1) ">
+     </path>
+     <path id="upper-right-red" class="quad" fill="rgb(194,0,0)" fill-rule="evenodd" stroke="#000000" stroke-width="5" stroke-linejoin="round" stroke-miterlimit="4" transform="rotate(-90)"  d="m-19.99998,150.000031a130,130 0 0 1 -129.70202,129.99966l-0.29798,-129.99966l130,0z">
+     </path>
+    </g>
+    <g id="layer3"/>
+    <circle id="inner-rim" fill="#000000" fill-rule="evenodd" stroke="#2573d5" stroke-width="0" stroke-linejoin="round" stroke-miterlimit="4" r="60" cy="150" cx="150">
+    </circle>
+    </g>
+    <g id="layer4">
+     <circle id="inner-circle" fill="#ccc" fill-rule="evenodd" stroke="#2573d5" stroke-width="0" stroke-linejoin="round" stroke-miterlimit="4" r="50" cy="150" cx="150">
+     </circle>
+    </g>
+   </g>
+  </svg>
+
+  <button id="start" class="start-hover-on-off" type="button" name="start">start</button>
+
+  <div>
+    <p id="colorSequence"></p>
+  </div>
+
+  <form name="controls1" id="controls1">
+    <input class="radio1" type="radio" name="speed" value="slow" /><span class="radio1-text">slow</span><br />
+    <input class="radio1" type="radio" name="speed" value="normal" checked /><span class="radio1-text">normal</span><br />
+    <input class="radio1" type="radio" name="speed" value="fast" /><span class="radio1-text">fast</span><br />
+  </form>
+
+  <form name="controls2" id="controls2">
+    <input id="lightOnLength" type="number" value="0" min="0" max="1500" step="50" />
+    <br /><label>custom speed<br />(ms)</label>
+  </form>
+
+  <form name="controls3" id="controls3">
+    <input class="radio3" type="radio" name="sound" value="sound" /><span class="radio3-text">sound</span><br />
+    <input class="radio3" type="radio" name="sound" value="mute" checked/><span class="radio3-text">mute</span><br />
+  </form>
+
+  <!-- <button id="wrong" type="button" name="wrong">wrong (test)</button> -->
+
+
+<script type="text/javascript" src="simon.js">
+</script>
+
+</body>
+
+</html>
