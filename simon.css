@@ -205,7 +205,7 @@ button:focus {
   color: #ccc;
 }
 
-#controls1 {
+/*#controls1 {
   position: absolute;
   display: flex;
   flex-direction: row;
@@ -216,9 +216,9 @@ button:focus {
   color: #ccc;
   font-size: 0.8em;
   line-height: 0.8em;
-}
+}*/
 
-#controls2 {
+/*#controls2 {
   position: absolute;
   display: none;
   width: 100px;
@@ -227,37 +227,45 @@ button:focus {
   right: 15px;
   color: #ccc;
   font-size: 0.8em;
-}
+}*/
 
-#controls3 {
+#controls {
   position: absolute;
-  bottom: 15%;
-  right: 10px;
-  /*transform: translate(0, -50%);*/
-  /*-webkit-transform: translate(0, -50%);*/
-  width: 85px;
-  height: 50px;
+  bottom: 50px;
+  right: 50px;
+  width: 80px;
+  height: 200px;
   color: #ccc;
   font-size: 0.8em;
   line-height: 0.8em;
+}
+
+#controls4 {
+  display: none;
+}
+
+#controls1, #controls2 {
+  border-bottom: 1px solid #666;
+  padding-bottom: 5px;
+  margin-bottom: 5px;
 }
 
 input {
   width: 54px;
 }
 
-.radio1, .radio3 {
+.radio1, .radio2, .radio3 {
   height: 1.6em;
   width: 1.6em;
 }
 
-.radio1-text {
+/*.radio1-text {
   margin: 0 4px 0 4px;
   position: relative;
   top: 7px;
-}
+}*/
 
-.radio3-text {
+.radio-text {
   margin-left: 4px;
   position: relative;
   top: -6px;
@@ -286,7 +294,7 @@ input {
 **********************************************/
 
 @media (orientation: portrait) {
-  #controls1 {
+  /*#controls1 {
     display: block;
     width: 85px;
     height: 80px;
@@ -296,7 +304,7 @@ input {
     margin-left: 4px;
     position: relative;
     top: -6px;
-  }
+  }*/
 }
 
 @media (max-height: 770px) {
@@ -315,6 +323,10 @@ input {
     cursor: pointer;
     letter-spacing: 0;
     color: #000;
+  }
+
+  #controls {
+    bottom: 10px;
   }
 }
 
@@ -348,6 +360,12 @@ input {
   }
 }
 
+@media (max-width: 800px) {
+  #controls {
+    right: 10px;
+  }
+}
+
 @media (max-width: 600px) {
   h1 {
     font-size: 1.5em;
@@ -355,8 +373,15 @@ input {
   }
 }
 
-@media (orientation: landscape) and (max-width: 770px) {
+@media (orientation: portrait) and (max-width: 650px) {
+  #controls2 {
+    display:none;
+  }
 
+  #controls {
+    height: 135px;
+    bottom: 10px;
+  }
 }
 
 @media (orientation: landscape) and (max-height: 770px) {

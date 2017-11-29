@@ -1,5 +1,3 @@
-// 'use strict';
-
 /********************************************
 *********************************************
 **  Copyright (C) 2017
@@ -9,6 +7,7 @@
 **
 *********************************************
 ********************************************/
+
 // "use strict";  // Uncaught SyntaxError: In strict mode code, functions can only be declared at top level or inside a block.
 
 var simonModule = function () {
@@ -24,7 +23,8 @@ var simonModule = function () {
     upperRightRed: document.getElementById('upper-right-red'),
     lowerLeftYellow: document.getElementById('lower-left-yellow'),
     lowerRightBlue: document.getElementById('lower-right-blue'),
-    innerCircle: document.getElementById('inner-circle')
+    innerCircle: document.getElementById('inner-circle'),
+    startButton: document.getElementById('start')
   };
 
   var quadrants = {
@@ -40,6 +40,12 @@ var simonModule = function () {
     defaultYellow: cacheDom.lowerLeftYellow.getAttribute('fill'),
     defaultBlue: cacheDom.lowerRightBlue.getAttribute('fill')
   };
+
+  var misc = {
+    gameClickerPosition: 0,
+    strictMode: null, // value determined by strictModeSetter()
+    quitGameTimeoutCleared: null
+  }
 
   var getColor = function getColor(id) {
     var color = void 0;
@@ -77,6 +83,7 @@ var simonModule = function () {
     element.setAttribute('fill', color);
   };
 
+
   /********************************************
    Light show functions:
   ********************************************/
@@ -96,12 +103,6 @@ var simonModule = function () {
 
   var lightShowSettings2 = function lightShowSettings2(quad, el, loopTime) {
     quad === 1 ? lightShow1(1, el, loopTime) : quad === 2 ? lightShow2(2, el, loopTime) : quad === 3 ? lightShow3(3, el, loopTime) : quad === 4 ? lightShow4(4, el, loopTime) : null;
-    // timeoutOn = setTimeout(function() {
-    // lightOn(el, 50);
-    // }, 500 * quad);
-    // timeoutOff = setTimeout(function() {
-    // lightOff(el);
-    // }, 2000 + 500 * quad);
   };
 
   var lightShow1 = function lightShow1(quad, el, loopTime) {
@@ -148,18 +149,10 @@ var simonModule = function () {
     }, lapseEnd + lapseStart * quad);
   };
 
-  /*var asdf = function(i) {
-    let x = 'timeoutOn' + i;
-    clearTimeout(x);
-    let y = 'timeoutOff' + i;
-    console.log(y);
-    clearTimeout(y);
-  };*/
-
   var lightShowSwitch = false;
 
   var lightShowStart = function lightShowStart(loopTime) {
-    if (!lightShowSwitch) {
+    if ( !lightShowSwitch ) {
       console.log(lightShowSwitch);
       lightShowPattern(loopTime);
       intervalOnOff = setInterval(function () {
@@ -201,6 +194,7 @@ var simonModule = function () {
   };
 
   var wrongAnswerLights = function wrongAnswerLights() {
+    cacheDom.startButton.innerHTML = 'wrong!';
     var allQuads = cacheDom.allColorButtons.childNodes;
     var color = void 0;
     var colors = ['red', 'white'];
@@ -209,18 +203,19 @@ var simonModule = function () {
     var interval = setInterval(function () {
       position === true ? color = colors[0] : color = colors[1];
       for ( var i = 0; i < allQuads.length; i++ ) {
-        if (allQuads[i].nodeType === 1) {
+        if ( allQuads[i].nodeType === 1 ) {
           allQuads[i].setAttribute('fill', color);
         }
       }
       position = !position;
       counter++;
-      if (counter === 6) {
+      if ( counter === 6 ) {
         clearInterval(interval);
         resetQuadColors();
       }
     }, 150);
   };
+
 
   /********************************************
    Heading (h1) colorizer:
@@ -242,7 +237,7 @@ var simonModule = function () {
     var h1ArrColorized = alpha.map(function (x, index) {
       var y = void 0;
       var indexShift = index + position;
-      if (indexShift <= 3) {
+      if ( indexShift <= 3 ) {
         y = indexShift;
       } else {
         y = indexShift % 4;
@@ -253,7 +248,7 @@ var simonModule = function () {
     var h1ColorizedWords = h1ArrColorized.join(' ');
     letters_words === 'letters' ? h1.innerHTML = h1ColorizedLetters : letters_words === 'words' ? h1.innerHTML = h1ColorizedWords : null;
     position++;
-    if (position > h1Colors.length) {
+    if ( position > h1Colors.length ) {
       position = 0;
     }
   };
@@ -283,61 +278,135 @@ var simonModule = function () {
 
   var randomQuads = []; /*[1,1,2,2,3,3,4,4,1,1,2,2,3,3,4,4,1,1,2,3,4,1,2,3]; */
 
+  // adds random lights in game sequence:
   var randomizer = function randomizer() {
     var nextQuad = Math.floor(Math.random() * 4 + 1);
     randomQuads.push(nextQuad);
   };
 
-  // const controls1 = document.getElementById('controls1');
-  // const controls2 = document.getElementById('controls2');
+  // determines if strict mode is on or off:
+  function strictModeSetter() {
+    var radio2Setting = document.querySelectorAll('.radio2');
+    radio2Setting[0].checked ? misc.strictMode = true : radio2Setting[1].checked ? misc.strictMode = false :
+    null;
+  }
 
   // adds & removes hover class on quads:
   var hoverQuadsOnOff = function hoverQuadsOnOff(x) {
     var allQuads = cacheDom.allColorButtons.childNodes;
-    if (x === 'on') {
+    if ( x === 'on' ) {
       for ( var i = 0; i < allQuads.length; i++ ) {
-        if (allQuads[i].nodeType === 1) {
+        if ( allQuads[i].nodeType === 1 ) {
           allQuads[i].classList.add('quads-hover-on-off');
         }
       }
     }
-    if (x === 'off') {
+    if ( x === 'off' ) {
       for ( var i = 0; i < allQuads.length; i++ ) {
-        if (allQuads[i].nodeType === 1) {
+        if ( allQuads[i].nodeType === 1 ) {
           allQuads[i].classList.remove('quads-hover-on-off');
         }
       }
     }
   };
 
+  // tests whether you're correct during the game:
+  function gameTest(el) {
+    var lgt = randomQuads.length;
+    var currentQuad = randomQuads[misc.gameClickerPosition];
+    var nextQuadEl = quadrants[currentQuad];
+    if ( el === nextQuadEl ) {
+      cacheDom.startButton.innerHTML = 'correct';
+      misc.gameClickerPosition++;
+    } else {
+      wrongAnswerLights();
+      removeQuadClickerEvent();
+      hoverQuadsOnOff('off');
+      if ( misc.strictMode ) {
+        gameOver(1);
+      }
+      else if ( !misc.strictMode ) {
+        misc.gameClickerPosition = 0;
+        // gameTest(el);
+        // gameClicker(el);
+        setTimeout(resumeGame, 1500);
+      }
+    }
+    if ( misc.gameClickerPosition === lgt ) {
+      cacheDom.startButton.innerHTML = 'nice!';
+      removeQuadClickerEvent();
+      hoverQuadsOnOff('off');
+      setTimeout(startGame, 2000);
+      misc.gameClickerPosition = 0;
+    }
+  }
+
+  // determines actions when game is over:
+  function gameOver(type) {
+    if ( !type ) {
+      type === 0;
+    }// hoverQuadsOnOff('off');
+    // removeQuadClickerEvent();
+    disableQuitButton();
+    let score = randomQuads.length - 1;
+    // cacheDom.startButton.innerHTML = 'wrong!';
+    setTimeout(function() {
+      cacheDom.startButton.innerHTML = 'score:<br />' + score;
+    }, type * 1000); // 150 * 6 ("wrong" duration) + 100 (no delay for quit)
+    document.getElementById('colorSequence').style.visibility = 'visible';
+    setTimeout(function() {
+      cacheDom.startButton.innerHTML = 'try<br />again';
+      cacheDom.startButton.removeAttribute('disabled');
+      enableStartButton();
+      cacheDom.startButton.classList.add('start-hover-on-off');
+    }, 5000);
+    setTimeout(function() {
+      if ( cacheDom.startButton.innerHTML === 'try<br>again' ) {
+        cacheDom.startButton.innerText = 'start';
+      }
+    }, 15000);
+    randomQuads = [];
+    misc.gameClickerPosition = 0;
+    return;
+  }
+
+  // Option to quit game after some time:
+  function quitGame() {
+    cacheDom.startButton.innerHTML = 'quit?';
+    enableQuitButton();
+    cacheDom.startButton.removeAttribute('disabled');
+    cacheDom.startButton.classList.add('start-hover-on-off');
+  }
+
   // main game controls outside of user actions:
-  // var quadClickerEventType = 'click'; //default
   var startGame = function startGame() {
     randomizer();
-    volume();
-    var startButton = document.getElementById('start');
+    resumeGame();
+  }
+
+  var resumeGame = function () {
+    volume(); // retrieves on/off sound value
+    strictModeSetter();
     document.getElementById('colorSequence').style.visibility = 'hidden';
-    startButton.setAttribute('disabled', true);
+    cacheDom.startButton.setAttribute('disabled', true);
+    // removes event listener (cannot disable button for touch):
     disableStartButton();
-    startButton.classList.remove('start-hover-on-off');
+    cacheDom.startButton.classList.remove('start-hover-on-off');
     var color = ['green', 'red', 'yellow', 'blue'];
     var colorSequence = [];
     // let colorCodes = ['rgb(68,144,86)', 'rgb(194,0,0)', 'rgb(245,184,22)', 'rgb(42,91,154)'];
     var colorCodes = [colors.defaultGreen, colors.defaultRed, colors.defaultYellow, colors.defaultBlue];
     var el = document.querySelector('#colorSequence');
     var lightOnLength = document.getElementById('lightOnLength').value;
-    console.log('lightOnLength (before):  ' + lightOnLength);
     // Radio buttons control speed (length of lightOn) & intermittent (time between lights on):
-    var radio1Setting = document.querySelectorAll('.radio1');
-    lightOnLength > 0 ? lightOnLength = lightOnLength : radio1Setting[0].checked ? lightOnLength = 800 : radio1Setting[1].checked ? lightOnLength = 550 : radio1Setting[2].checked ? lightOnLength = 300 : null;
-    console.log('lightOnLength (after):  ' + lightOnLength);
+    var radio3Setting = document.querySelectorAll('.radio3');
+    lightOnLength > 0 ? lightOnLength = lightOnLength : radio3Setting[0].checked ? lightOnLength = 800 : radio3Setting[1].checked ? lightOnLength = 550 : radio3Setting[2].checked ? lightOnLength = 300 : null;
     var intermittent = Math.round(lightOnLength / 3);
-    console.log('intermittent: ' + intermittent);
     var lightOffStart = Number(lightOnLength) + intermittent;
     var cycleStart = Number(lightOffStart) + intermittent;
     randomQuads.forEach(function (x, index) {
       setTimeout(function () {
-        lightOn(quadrants[x], 70);
+        lightOn(quadrants[x], 70); // 70 is light intensity
         lightBeep(x, lightOnLength);
       }, intermittent + cycleStart * index); //200 + 1000
       setTimeout(function () {
@@ -351,7 +420,6 @@ var simonModule = function () {
       text += '<span style="color: ' + colorCodes[y] + '">\u25CF</span>';
     });
     var lgt = colorSequence.length;
-    console.log(randomQuads);
     setTimeout(function (lgt) {
       el.innerHTML = 'you got ' + (randomQuads.length - 1) + ' correct!<br />' + text + '</span>';
     }, intermittent + cycleStart * (lgt - 1)); //200 + 1000
@@ -359,63 +427,25 @@ var simonModule = function () {
     setTimeout(function (lgt) {
       addQuadClickerEvent();
       hoverQuadsOnOff('on');
+      quitGameTimeout = setTimeout(quitGame, 9000);
+      misc.quitGameTimeoutCleared = false;
     }, cycleStart * lgt);
-  }; // end of startGame function
-
+  }; // end of resumeGame function
 
   // game controls based on user actions:
-  var gameClickerPosition = 0;
   var gameClicker = function gameClicker(el) {
-    volume();
-    var startButton = document.getElementById('start');
+    // volume(); // retrieves on/off sound value
+    if ( !misc.quitGameTimeoutCleared ) {
+      clearTimeout( quitGameTimeout );
+      misc.quitGameTimeoutCleared = true;
+      console.log('cleared quitGame feature');
+    }
     var lgt = randomQuads.length;
-    if (lgt === 0) {
+    if ( lgt === 0 ) {
       return;
-    } else {
-      var currentQuad = randomQuads[gameClickerPosition];
-      var nextQuadEl = quadrants[currentQuad];
-      if (el === nextQuadEl) {
-        startButton.innerHTML = 'correct';
-        // console.log('right!');
-        // console.log('gameClicker: ' + el.id);
-        // console.log(nextQuadEl.id);
-        gameClickerPosition++;
-        // console.log(gameClickerPosition);
-      } else {
-        wrongAnswerLights();
-        hoverQuadsOnOff('off');
-        removeQuadClickerEvent();
-        let score = randomQuads.length - 1;
-        startButton.innerHTML = 'wrong!';
-        setTimeout(function () {
-          startButton.innerHTML = 'score:<br />' + score;
-        }, 900); // 150 * 6
-        document.getElementById('colorSequence').style.visibility = 'visible';
-        setTimeout(function () {
-          startButton.innerHTML = 'try<br />again';
-          startButton.removeAttribute('disabled');
-          enableStartButton();
-          startButton.classList.add('start-hover-on-off');
-        }, 5000);
-        setTimeout(function () {
-          if ( startButton.innerHTML === 'try<br>again' ) {
-            startButton.innerText = 'start';
-          }
-        }, 15000);
-        // console.log('wrong!');
-        // console.log('gameClicker: ' + el.id);
-        // console.log(nextQuadEl.id);
-        randomQuads = [];
-        gameClickerPosition = 0;
-        return;
-      }
-      if (gameClickerPosition === lgt) {
-        startButton.innerHTML = 'nice!';
-        removeQuadClickerEvent();
-        hoverQuadsOnOff('off');
-        setTimeout(startGame, 2000);
-        gameClickerPosition = 0;
-      }
+    }
+    else {
+      gameTest(el);
     }
   };
 
@@ -425,8 +455,8 @@ var simonModule = function () {
   gainNode.connect(audioCtx.destination);
   gainNode.gain.value = 0; //default
   function volume() {
-    var radio3Setting = document.querySelectorAll('.radio3');
-    radio3Setting[0].checked ? gainNode.gain.value = 0.3 : radio3Setting[1].checked ? gainNode.gain.value = 0 :
+    var radio1Setting = document.querySelectorAll('.radio1');
+    radio1Setting[0].checked ? gainNode.gain.value = 0.3 : radio1Setting[1].checked ? gainNode.gain.value = 0 :
     null;
   }
 
@@ -511,16 +541,27 @@ var simonModule = function () {
     document.getElementById('start').removeEventListener('touchstart', startGame, false);
   }
 
+  // Enables quit (gameOver) button:
+  function enableQuitButton() {
+    document.getElementById('start').addEventListener('click', gameOver, false);
+    document.getElementById('start').addEventListener('touchstart', gameOver, false);
+  }
+
+  // Disables quit (gameOver) button:
+  function disableQuitButton() {
+    document.getElementById('start').removeEventListener('click', gameOver, false);
+    document.getElementById('start').removeEventListener('touchstart', gameOver, false);
+  }
+
   // Click or touch quads to turn lights on. Allows to play the game:
   function quadClicker(event) {
-    if (event.target !== event.currentTarget) {
+    if ( event.target !== event.currentTarget ) {
       lightOn(event.target, 70);
       lightBeep(event.target.id, 300);
       setTimeout(lightOff.bind(null, event.target), 300);
       gameClicker(event.target);
       if ( event.type === 'touchstart' ) {
         event.preventDefault();
-        console.log(event.type);
         // event.stopPropagation();
       }
       // console.log('eventListener (target): ' + event.target);
@@ -545,22 +586,22 @@ var simonModule = function () {
   document.getElementById('controls1').addEventListener('click', function () {
     document.getElementById('lightOnLength').value = 0;
     // document.querySelectorAll('.radio')[1].checked = true;
-    event.stopPropagation();
+    // event.stopPropagation();
   }, false);
 
   // Unchecks all radio buttons when speed value is adjusted (clicked):
-  document.getElementById('controls2').addEventListener('click', function () {
-    var radioSetting = document.querySelectorAll('.radio');
-    radioSetting[0].checked = false;
-    radioSetting[1].checked = false;
-    radioSetting[2].checked = false;
+  document.getElementById('controls4').addEventListener('click', function () {
+    var radio3Setting = document.querySelectorAll('.radio3');
+    radio3Setting[0].checked = false;
+    radio3Setting[1].checked = false;
+    radio3Setting[2].checked = false;
   }, false);
 
   // Click outer rim for a wheel spin (CSS animation):
   document.getElementById('outer-rim').addEventListener('click', function () {
     document.getElementById('main-board').classList.add('board-spin');
-    event.preventDefault();
-    event.stopPropagation();
+    // event.preventDefault();
+    // event.stopPropagation();
   }, false);
 
   // leaving outer rim removes board-spin class.
