@@ -394,14 +394,14 @@ var simonModule = function () {
         localStorage.setItem('storedHighScoreSimon', score);
         misc.storedHighScoreSimon = score;
         highScoreShow(score);
-        document.getElementById('new-best').textContent = '(new high score)';
+        document.getElementById('new-best').textContent = '(new high score!)';
       }
     }
     else {
       localStorage.setItem('storedHighScoreSimon', score);
       misc.storedHighScoreSimon = score;
       highScoreShow(score);
-      document.getElementById('new-best').textContent = '(new high score)';
+      document.getElementById('new-best').textContent = '(new high score!)';
     }
   }
 
@@ -471,7 +471,7 @@ var simonModule = function () {
     });
     var lgt = colorSequence.length;
     setTimeout(function (lgt) {
-      el.innerHTML = 'you got ' + (randomQuads.length - 1) + ' correct! <span id="new-best" style="font-size: 0.8em;">(your best is ' + misc.storedHighScoreSimon + ' )</span><br />' + text + '</span>';
+      el.innerHTML = 'you got ' + (randomQuads.length - 1) + ' correct <span id="new-best" style="font-size: 0.8em;"> ( your best is ' + misc.storedHighScoreSimon + ' )</span><br />' + text + '</span>';
     }, intermittent + cycleStart * (lgt - 1)); //200 + 1000
     cacheDom.startButton.innerHTML = 'round<br />' + randomQuads.length;
     setTimeout(function (lgt) {

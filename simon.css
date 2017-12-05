@@ -23,6 +23,13 @@ h1 {
   text-align: center;
   margin-bottom: 5px;
   padding-bottom: 5px;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
 }
 
 .visible {
@@ -48,9 +55,11 @@ h1 {
   /*box-shadow: 4px 4px 8px 3px rgba(0, 0, 0, 0.40);*/
 }
 
+/* (testing only)
 #inner-circle:hover {
   cursor: pointer;
 }
+*/
 
 .quads-hover-on-off:hover {
   cursor: pointer;
@@ -73,6 +82,13 @@ h1 {
   background-color: #ccc; /* #000 or #7a80a1 */
   color: #000;  /* #ccc */
   font-weight: bold;
+  user-select: none; /* prevents text selection */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;  
 }
 
 #inner-circle-text {
