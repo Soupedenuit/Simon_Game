@@ -18,13 +18,16 @@ var simonModule = function () {
   // cacheDom: function() {
 
   var cacheDom = {
+    h1: document.getElementById('h1'),
+    mainBoard: document.getElementById('main-board'),
     allColorButtons: document.getElementById('layer2'),
     upperLeftGreen: document.getElementById('upper-left-green'),
     upperRightRed: document.getElementById('upper-right-red'),
     lowerLeftYellow: document.getElementById('lower-left-yellow'),
     lowerRightBlue: document.getElementById('lower-right-blue'),
     innerCircle: document.getElementById('inner-circle'),
-    startButton: document.getElementById('start')
+    startButton: document.getElementById('start'),
+    innerCircleTextArea: document.getElementById('inner-circle-text')
   };
 
   var quadrants = {
@@ -44,7 +47,8 @@ var simonModule = function () {
   var misc = {
     gameClickerPosition: 0,
     strictMode: null, // value determined by strictModeSetter()
-    quitGameTimeoutCleared: null
+    quitGameTimeoutCleared: null,
+    storedHighScoreSimon: Number(localStorage.getItem('storedHighScoreSimon'))
   }
 
   var getColor = function getColor(id) {
@@ -53,7 +57,7 @@ var simonModule = function () {
     return color;
   };
 
-  const getQuad = function(el) {
+  var getQuad = function(el) {
     let quad;
     el === 'upper-left-green' ? quad = 1 :
     el === 'upper-right-red' ? quad = 2 :
@@ -159,8 +163,11 @@ var simonModule = function () {
         lightShowPattern(loopTime);
       }, loopTime);
       intervalH1 = setInterval(function () {
-        h1Colorizer('letters');
+        textColorizer('letters', cacheDom.h1);
       }, 100);
+      // intervalHighScore = setInterval(function () {
+      //   textColorizer('letters', cacheDom.innerCircleTextArea);
+      // }, 100);
       lightShowSwitch = !lightShowSwitch;
     } else {
       /*for ( let i = 1; i < 5; i++ ) {
@@ -176,11 +183,12 @@ var simonModule = function () {
       clearTimeout(timeoutOff4);
       clearInterval(intervalOnOff);
       clearInterval(intervalH1);
+      // clearInterval(intervalHighScore);
       lightOff(cacheDom.upperLeftGreen);
       lightOff(cacheDom.upperRightRed);
       lightOff(cacheDom.lowerLeftYellow);
       lightOff(cacheDom.lowerRightBlue);
-      h1Colorizer('words');
+      textColorizer('words', cacheDom.h1);
       console.log(lightShowSwitch);
       lightShowSwitch = !lightShowSwitch;
     }
@@ -218,23 +226,23 @@ var simonModule = function () {
 
 
   /********************************************
-   Heading (h1) colorizer:
+   Text colorizer:
   ********************************************/
 
   var position = 0;
-  var h1Colorizer = function h1Colorizer(letters_words) {
-    var h1 = document.querySelector('h1');
-    var h1ArrLetters = h1.textContent.split('');
-    var h1ArrWords = h1.textContent.split(' ');
-    var h1Colors = {
+  var textColorizer = function textColorizer(letters_words, target) {
+    // var h1 = cacheDom.h1;
+    var targetArrLetters = target.textContent.split('');
+    var targetArrWords = target.textContent.split(' ');
+    var targetColors = {
       0: '4e9a60',
       1: 'cc0000',
       2: '3465a4',
       3: 'ffc022'
     };
     var alpha = void 0;
-    letters_words === 'letters' ? alpha = h1ArrLetters : letters_words === 'words' ? alpha = h1ArrWords : null;
-    var h1ArrColorized = alpha.map(function (x, index) {
+    letters_words === 'letters' ? alpha = targetArrLetters : letters_words === 'words' ? alpha = targetArrWords : null;
+    var targetArrColorized = alpha.map(function (x, index) {
       var y = void 0;
       var indexShift = index + position;
       if ( indexShift <= 3 ) {
@@ -242,33 +250,33 @@ var simonModule = function () {
       } else {
         y = indexShift % 4;
       }
-      return '<span style="color:#' + h1Colors[y] + ';">' + x + '</span>';
+      return '<span style="color:#' + targetColors[y] + ';">' + x + '</span>';
     });
-    var h1ColorizedLetters = h1ArrColorized.join('');
-    var h1ColorizedWords = h1ArrColorized.join(' ');
-    letters_words === 'letters' ? h1.innerHTML = h1ColorizedLetters : letters_words === 'words' ? h1.innerHTML = h1ColorizedWords : null;
+    var targetColorizedLetters = targetArrColorized.join('');
+    var targetColorizedWords = targetArrColorized.join(' ');
+    letters_words === 'letters' ? target.innerHTML = targetColorizedLetters : letters_words === 'words' ? target.innerHTML = targetColorizedWords : null;
     position++;
-    if ( position > h1Colors.length ) {
+    if ( position > targetColors.length ) {
       position = 0;
     }
   };
 
-  var h1ColorReset = function h1ColorReset() {
-    var h1 = document.querySelector('h1');
-    var text = h1.textContent;
-    h1.innerHTML = '<span style="color:#ccc">' + text + '</span>';
+  var textColorReset = function textColorReset(target) {
+    // var h1 = cacheDom.h1;
+    var text = target.textContent;
+    target.innerHTML = '<span style="color:#ccc">' + text + '</span>';
   };
 
-  h1Colorizer('words');
+  textColorizer('words', cacheDom.h1);
   zxcvb = setInterval(function () {
-    h1Colorizer('words');
+    textColorizer('words', cacheDom.h1);
   }, 100);
   setTimeout(function () {
-    h1ColorReset();
+    // textColorReset(cacheDom.h1);
     clearInterval(zxcvb);
-    h1Colorizer('words');
-    document.getElementById('main-board').classList.remove('board-intro');
-    document.getElementById('start').style.visibility = 'visible';
+    textColorizer('words', cacheDom.h1);
+    cacheDom.mainBoard.classList.remove('board-intro');
+    cacheDom.startButton.style.visibility = 'visible';
   }, 2900); // equal to CSS animation-duration plus delay minus interval
 
 
@@ -349,6 +357,7 @@ var simonModule = function () {
     // removeQuadClickerEvent();
     disableQuitButton();
     let score = randomQuads.length - 1;
+    highScore(score);
     // cacheDom.startButton.innerHTML = 'wrong!';
     setTimeout(function() {
       cacheDom.startButton.innerHTML = 'score:<br />' + score;
@@ -362,7 +371,7 @@ var simonModule = function () {
     }, 5000);
     setTimeout(function() {
       if ( cacheDom.startButton.innerHTML === 'try<br>again' ) {
-        cacheDom.startButton.innerText = 'start';
+        cacheDom.startButton.textContent = 'start';
       }
     }, 15000);
     randomQuads = [];
@@ -377,6 +386,47 @@ var simonModule = function () {
     cacheDom.startButton.removeAttribute('disabled');
     cacheDom.startButton.classList.add('start-hover-on-off');
   }
+
+  // Determines if a new high score was achieved:
+  function highScore(score) {
+    if ( misc.storedHighScoreSimon ) {
+      if ( score > misc.storedHighScoreSimon ) {
+        localStorage.setItem('storedHighScoreSimon', score);
+        misc.storedHighScoreSimon = score;
+        highScoreShow(score);
+        document.getElementById('new-best').textContent = '(new high score)';
+      }
+    }
+    else {
+      localStorage.setItem('storedHighScoreSimon', score);
+      misc.storedHighScoreSimon = score;
+      highScoreShow(score);
+      document.getElementById('new-best').textContent = '(new high score)';
+    }
+  }
+
+  // Starts lightShow if high score achieved:
+  function highScoreShow(score) {
+    setTimeout(lightShowStart.bind(null, 400), 1000); // "wrong" duration
+    setTimeout(lightShowStart.bind(null, 400), 5000); // duration of CSS animation plus start delay
+    setTimeout(function() {
+      cacheDom.startButton.style.visibility = 'hidden';
+      cacheDom.innerCircleTextArea.innerHTML = 'NEW<br />HIGH SCORE:<br />' + score;
+    }, 1000); // "wrong" duration
+    setTimeout(function() {
+      cacheDom.startButton.style.visibility = 'visible';
+      cacheDom.innerCircleTextArea.textContent = '';
+    }, 5000); // duration of CSS animation
+
+
+    setTimeout(function() {
+      cacheDom.mainBoard.classList.add('board-spin');
+    }, 1000);
+    setTimeout(function() {
+      cacheDom.mainBoard.classList.remove('board-spin');
+    }, 5000); // duration of CSS animation plus start delay
+  }
+
 
   // main game controls outside of user actions:
   var startGame = function startGame() {
@@ -421,9 +471,9 @@ var simonModule = function () {
     });
     var lgt = colorSequence.length;
     setTimeout(function (lgt) {
-      el.innerHTML = 'you got ' + (randomQuads.length - 1) + ' correct!<br />' + text + '</span>';
+      el.innerHTML = 'you got ' + (randomQuads.length - 1) + ' correct! <span id="new-best" style="font-size: 0.8em;">(your best is ' + misc.storedHighScoreSimon + ' )</span><br />' + text + '</span>';
     }, intermittent + cycleStart * (lgt - 1)); //200 + 1000
-    document.getElementById('start').innerHTML = 'round<br />' + randomQuads.length;
+    cacheDom.startButton.innerHTML = 'round<br />' + randomQuads.length;
     setTimeout(function (lgt) {
       addQuadClickerEvent();
       hoverQuadsOnOff('on');
@@ -449,7 +499,11 @@ var simonModule = function () {
     }
   };
 
-  // Audio API for lightOn sounds:
+
+  /********************************************
+   Audio API for lightOn sounds:
+  ********************************************/
+
   var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   var gainNode = audioCtx.createGain();
   gainNode.connect(audioCtx.destination);
@@ -480,7 +534,7 @@ var simonModule = function () {
     oscillator.connect(gainNode);
     oscillator.type = 'triangle'; //default
     // oscillator.frequency.value = 440;
-    let note;
+  let note;
     if ( typeof el !== 'number' ) {
       el = getQuad(el);
     }
@@ -498,59 +552,32 @@ var simonModule = function () {
 
 
   /********************************************
-   Modify SVG (other than colour):
-  ********************************************/
-
-  /*
-    const moveQuad = function() {
-      let quad = document.querySelectorAll('path')[3];
-      let trans = 'rotate(-45)';
-      quad.setAttribute('transform', trans);
-    }
-    moveQuad();
-    */
-
-
-  /********************************************
    Event Listeners:
   ********************************************/
 
-  function innerCircleLightShowStart(event) {
-    lightShowStart(400);
-    if ( event.type === 'touchstart' ) {
-      event.preventDefault();
-      console.log(event.type);
-      // event.stopPropagation();
-    }
-  }
-
-  // Click or touch inner circle to turn light show on/off:
-  cacheDom.innerCircle.addEventListener('click', innerCircleLightShowStart, false);
-  cacheDom.innerCircle.addEventListener('touchstart', innerCircleLightShowStart, false);
-
   // Enables start button:
   function enableStartButton() {
-    document.getElementById('start').addEventListener('click', startGame, false);
-    document.getElementById('start').addEventListener('touchstart', startGame, false);
+    cacheDom.startButton.addEventListener('click', startGame, false);
+    cacheDom.startButton.addEventListener('touchstart', startGame, false);
   }
   window.addEventListener('load', enableStartButton,false);
 
   // Disables start button:
   function disableStartButton() {
-    document.getElementById('start').removeEventListener('click', startGame, false);
-    document.getElementById('start').removeEventListener('touchstart', startGame, false);
+    cacheDom.startButton.removeEventListener('click', startGame, false);
+    cacheDom.startButton.removeEventListener('touchstart', startGame, false);
   }
 
   // Enables quit (gameOver) button:
   function enableQuitButton() {
-    document.getElementById('start').addEventListener('click', gameOver, false);
-    document.getElementById('start').addEventListener('touchstart', gameOver, false);
+    cacheDom.startButton.addEventListener('click', gameOver, false);
+    cacheDom.startButton.addEventListener('touchstart', gameOver, false);
   }
 
   // Disables quit (gameOver) button:
   function disableQuitButton() {
-    document.getElementById('start').removeEventListener('click', gameOver, false);
-    document.getElementById('start').removeEventListener('touchstart', gameOver, false);
+    cacheDom.startButton.removeEventListener('click', gameOver, false);
+    cacheDom.startButton.removeEventListener('touchstart', gameOver, false);
   }
 
   // Click or touch quads to turn lights on. Allows to play the game:
@@ -597,23 +624,10 @@ var simonModule = function () {
     radio3Setting[2].checked = false;
   }, false);
 
-  // Click outer rim for a wheel spin (CSS animation):
-  document.getElementById('outer-rim').addEventListener('click', function () {
-    document.getElementById('main-board').classList.add('board-spin');
-    // event.preventDefault();
-    // event.stopPropagation();
-  }, false);
-
-  // leaving outer rim removes board-spin class.
-  // (this enables reusing same CSS animation again)
-  document.getElementById('outer-rim').addEventListener('mouseout', function () {
-    document.getElementById('main-board').classList.remove('board-spin');
-  }, false);
-
   // Removes h1 if main board overlaps it:
   function h1Remover() {
-    let h1 = document.getElementsByTagName('h1')[0];
-    let board = document.getElementById('main-board');
+    let h1 = cacheDom.h1;
+    let board = cacheDom.mainBoard;
     let x = h1.getBoundingClientRect().bottom;
     let y = board.getBoundingClientRect().top;
     // console.log(y - x);
@@ -633,9 +647,24 @@ var simonModule = function () {
    TESTING:
   ********************************************/
 
+  /* (FOR TESTING ONLY)
+  // this function only used for eventListeners below:
+  function innerCircleLightShowStart(event) {
+    lightShowStart(400);
+    if ( event.type === 'touchstart' ) {
+      event.preventDefault();
+      console.log(event.type);
+      // event.stopPropagation();
+    }
+  }
+
+  // Click or touch inner circle to turn light show on/off:
+  cacheDom.innerCircle.addEventListener('click', innerCircleLightShowStart, false);
+  cacheDom.innerCircle.addEventListener('touchstart', innerCircleLightShowStart, false);
+  */
+
+  /* (FOR TESTING ONLY)
   // hovering over quads turns on the lights:
-  // (for testing only)
-  /*
     cacheDom.allColorButtons.addEventListener('mouseover', function(event) {
       if ( event.target !== event.currentTarget ) {
         lightOn(event.target, 50);
@@ -651,15 +680,14 @@ var simonModule = function () {
     }, false);
   */
 
+  /* (FOR TESTING ONLY)
   // Button for testing "wrong answer" lights:
-  /*
   document.getElementById('wrong').addEventListener('click', wrongAnswerLights, false);
   allColorButtons.addEventListener('mouseenter',lightOn.bind(null, target, 30), false);
   allColorButtons.addEventListener('mouseleave', lightOff.bind(null, target), false);
   */
 
-  // for testing only:
-  /*
+  /* (FOR TESTING ONLY)
   function addPointer() {
     window.addEventListener('pointerdown', function onFirstPointer(event) {
       window.POINTER_SIZE = event.height;
@@ -669,6 +697,23 @@ var simonModule = function () {
     }, false);
   }
   */
+
+  /* (FOR TESTING ONLY)
+  // Click outer rim for a wheel spin (CSS animation):
+  document.getElementById('outer-rim').addEventListener('click', function () {
+    cacheDom.mainBoard.classList.add('board-spin');
+    // event.preventDefault();
+    // event.stopPropagation();
+  }, false);
+
+  // leaving outer rim removes board-spin class.
+  // (this enables reusing same CSS animation again)
+  document.getElementById('outer-rim').addEventListener('mouseout', function () {
+    cacheDom.mainBoard.classList.remove('board-spin');
+  }, false);
+  */
+
+
 
 }();
 
